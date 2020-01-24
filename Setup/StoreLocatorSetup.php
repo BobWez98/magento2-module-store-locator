@@ -16,6 +16,7 @@ use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Setup\SchemaSetupInterface;
+use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Eav\Model\Entity\Attribute\ScopedAttributeInterface;
 use Magento\Eav\Model\Entity\Attribute\Source\Boolean;
 use Magento\Eav\Setup\EavSetup;
@@ -448,5 +449,24 @@ class StoreLocatorSetup
         );
 
         $eavSetup->addAttributeToGroup($entityId, $attrSetId, $groupId, 'image', 50);
+    }
+
+    /**
+     * Add street view url field.
+     *
+     * @param SchemaSetupInterface $setup
+     */
+    public function addStreetView(ModuleDataSetupInterface $setup)
+    {
+        $setup->getConnection()->addColumn(
+            $setup->getTable('smile_retailer_address'),
+            'street_view',
+            [
+                'type' => Table::TYPE_TEXT,
+                'length' => 255,
+                'nullable' => true,
+                'comment'  => 'Street view url'
+            ],
+        );
     }
 }

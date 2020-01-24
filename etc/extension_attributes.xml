@@ -30,6 +30,7 @@
                 <field>country_id</field>
                 <field>latitude</field>
                 <field>longitude</field>
+                <field>street_view</field>
             </join>
         </attribute>
         <attribute code="opening_hours" type="Smile\StoreLocator\Api\Data\RetailerTimeSlotInterface[]"/>
