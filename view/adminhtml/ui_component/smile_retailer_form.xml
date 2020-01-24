@@ -74,6 +74,19 @@
                 </item>
             </argument>
         </field>
+        <field name="street_view">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="sortOrder" xsi:type="number">35</item>
+                    <item name="dataType" xsi:type="string">string</item>
+                    <item name="formElement" xsi:type="string">input</item>
+                    <item name="label" xsi:type="string" translate="true">Street View Url</item>
+                    <item name="dataScope" xsi:type="string">address.street_view</item>
+                    <item name="visible" xsi:type="boolean">true</item>
+                    <item name="source" xsi:type="string">retailer</item>
+                </item>
+            </argument>
+        </field>
         <field name="country_id" component="Magento_Ui/js/form/element/select"  formElement="select">
             <argument name="data" xsi:type="array">
                 <item name="options" xsi:type="object">Smile\StoreLocator\Model\RetailerAddress\Source\Country</item>
@@ -153,21 +166,6 @@
                 </item>
             </argument>
         </field>
-        <fieldset name="address">
-            <field name="street_view">
-                <argument name="data" xsi:type="array">
-                    <item name="config" xsi:type="array">
-                        <item name="sortOrder" xsi:type="number">60</item>
-                        <item name="dataType" xsi:type="string">string</item>
-                        <item name="formElement" xsi:type="string">input</item>
-                        <item name="label" xsi:type="string" translate="true">Street view url</item>
-                        <item name="dataScope" xsi:type="string">address.street_view</item>
-                        <item name="visible" xsi:type="boolean">true</item>
-                        <item name="source" xsi:type="string">retailer</item>
-                    </item>
-                </argument>
-            </field>
-        </fieldset>
     </fieldset>
     <fieldset name="opening_hours">
         <argument name="data" xsi:type="array">

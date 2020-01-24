@@ -23,6 +23,11 @@ $retailer = $block->getRetailer();
     <div class="map" data-bind="afterRender: initMap"> </div>
 
     <div class="address-info">
+        <?php if ($block->getStreetView()): ?>
+            <div class="streetview">
+                <iframe src="<?php echo $block->getStreetView(); ?>" width="600" height="450" frameborder="0" style="border:0;" allowfullscreen=""></iframe>
+            </div>
+        <?php endif; ?>
         <div class="address">
             <?php echo $block->getDescription(); ?>
         </div>
