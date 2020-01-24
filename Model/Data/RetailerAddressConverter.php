@@ -49,6 +49,7 @@ class RetailerAddressConverter
         RetailerAddressInterface::REGION_ID,
         RetailerAddressInterface::COUNTRY_ID,
         RetailerAddressInterface::COORDINATES,
+        RetailerAddressInterface::STREET_VIEW,
     ];
 
     /**
