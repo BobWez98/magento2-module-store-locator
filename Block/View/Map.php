@@ -138,12 +138,12 @@ class Map extends AbstractView
     }
 
     /**
-     * Returns retailer Street view
+     * Returns retailer description
      *
      * @return null|string
      */
     public function getStreetView()
     {
-        return $this->getRetailer()->getStreetView();
+        return $this->getAddress()->getStreetView();
     }
 }
