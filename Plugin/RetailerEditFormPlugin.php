@@ -36,6 +36,7 @@ class RetailerEditFormPlugin
 
         if ($retailer !== null && $retailer->getExtensionAttributes()->getAddress()) {
             $address = $retailer->getExtensionAttributes()->getAddress();
+            $facilities = json_decode($address->getFacilities(), true);
             $result[$retailer->getId()]['address'] = $address->getData();
 
             if ($address->getCoordinates()) {
@@ -45,6 +46,8 @@ class RetailerEditFormPlugin
                 ];
             }
         }
+
+        $result[$retailer->getId()]['facilities'] = $facilities;
 
         return $result;
     }

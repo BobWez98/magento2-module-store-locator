@@ -466,7 +466,26 @@ class StoreLocatorSetup
                 'length' => 255,
                 'nullable' => true,
                 'comment'  => 'Street view url'
-            ],
+            ]
+        );
+    }
+
+    /**
+     * Add facilities field.
+     *
+     * @param SchemaSetupInterface $setup
+     */
+    public function addFacilities(ModuleDataSetupInterface $setup)
+    {
+        $setup->getConnection()->addColumn(
+            $setup->getTable('smile_retailer_address'),
+            'facilities',
+            [
+                'type' => Table::TYPE_TEXT,
+                'length' => 255,
+                'nullable' => true,
+                'comment'  => 'Facilities'
+            ]
         );
     }
 }

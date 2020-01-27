@@ -74,5 +74,9 @@ class UpgradeData implements UpgradeDataInterface
         if (version_compare($context->getVersion(), '2.0.1', '<')) {
             $this->storeLocatorSetup->addStreetView($setup);
         }
+
+        if (version_compare($context->getVersion(), '2.0.2', '<')) {
+            $this->storeLocatorSetup->addFacilities($setup);
+        }
     }
 }

@@ -31,6 +31,7 @@
                 <field>latitude</field>
                 <field>longitude</field>
                 <field>street_view</field>
+                <field>facilities</field>
             </join>
         </attribute>
         <attribute code="opening_hours" type="Smile\StoreLocator\Api\Data\RetailerTimeSlotInterface[]"/>

@@ -39,10 +39,12 @@ class AddressPostDataHandler implements \Smile\Retailer\Model\Retailer\PostDataH
      */
     public function __construct(
         \Smile\StoreLocator\Api\Data\RetailerAddressInterfaceFactory $retailerAddressFactory,
-        \Smile\Map\Api\Data\GeoPointInterfaceFactory $geoPointFactory
+        \Smile\Map\Api\Data\GeoPointInterfaceFactory $geoPointFactory,
+        \Magento\Framework\Serialize\SerializerInterface $serializer
     ) {
         $this->retailerAddressFactory = $retailerAddressFactory;
         $this->geoPointFactory        = $geoPointFactory;
+        $this->serializer             = $serializer;
     }
 
     /**
@@ -59,6 +61,10 @@ class AddressPostDataHandler implements \Smile\Retailer\Model\Retailer\PostDataH
 
             if (isset($addressData['street']) && !is_array($addressData['street'])) {
                 $addressData['street'] = explode('\n', $addressData['street']);
+            }
+
+            if (isset($addressData['facilities']) && is_array($addressData['facilities'])) {
+                $addressData['facilities'] = $this->serializer->serialize($addressData['facilities']);
             }
 
             $data['address'] = $this->retailerAddressFactory->create(['data' => $addressData]);

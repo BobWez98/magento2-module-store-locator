@@ -146,4 +146,14 @@ class Map extends AbstractView
     {
         return $this->getAddress()->getStreetView();
     }
+
+    /**
+     * Returns retailer facilities
+     *
+     * @return null|array
+     */
+    public function getFacilities()
+    {
+        return $this->getAddress()->getFacilities();
+    }
 }

@@ -62,6 +62,7 @@ class AddressSaveHandler implements ExtensionInterface
     public function execute($entity, $arguments = [])
     {
         $addressEntity = $entity->getAddress();
+        $addressEntity->setFacilities(json_encode($entity->getFacilities()));
         $addressEntity->setRetailerId($entity->getId());
 
         $addressModel  = $this->modelFactory->create();
@@ -72,6 +73,7 @@ class AddressSaveHandler implements ExtensionInterface
         }
 
         $addressModel = $this->converter->toModel($addressEntity);
+        $addressModel->setFacilities($addressEntity->getFacilities());
 
         $this->resource->save($addressModel);
 

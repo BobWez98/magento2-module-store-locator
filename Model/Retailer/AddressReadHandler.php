@@ -66,8 +66,8 @@ class AddressReadHandler implements ExtensionInterface
 
         $this->resource->load($addressModel, $entity->getId(), RetailerAddressInterface::RETAILER_ID);
 
+        $addressModel->setFacilities(json_decode($addressModel->getFacilities(), true));
         $addressEntity = $this->converter->toEntity($addressModel);
-
         $entity->getExtensionAttributes()->setAddress($addressEntity);
         $entity->setAddress($addressEntity);
 
