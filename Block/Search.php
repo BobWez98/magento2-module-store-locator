@@ -164,6 +164,7 @@ class Search extends \Magento\Framework\View\Element\Template implements Identit
                     'longitude'    => $address->getCoordinates()->getLongitude(),
                     'name'         => $retailer->getName(),
                     'address'      => $this->addressFormatter->formatAddress($address, AddressFormatter::FORMAT_ONELINE),
+                    'addressHtml'  => $this->addressFormatter->formatAddress($address, AddressFormatter::FORMAT_HTML),
                     'facilities'   => json_decode($address->getFacilities(), true),
                     'url'          => $this->storeLocatorHelper->getRetailerUrl($retailer),
                     'directionUrl' => $this->map->getDirectionUrl($address->getCoordinates()),
