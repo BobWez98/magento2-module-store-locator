@@ -138,13 +138,23 @@ class Map extends AbstractView
     }
 
     /**
-     * Returns retailer description
+     * Returns streetview
      *
      * @return null|string
      */
     public function getStreetView()
     {
         return $this->getAddress()->getStreetView();
+    }
+
+    /**
+     * Returns the store search home url
+     *
+     * @return null|string
+     */
+    public function getHomeUrl()
+    {
+        return $this->storeLocatorHelper->getHomeUrl();
     }
 
     /**
