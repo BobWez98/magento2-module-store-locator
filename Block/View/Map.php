@@ -16,6 +16,7 @@ use Smile\Map\Api\MapInterface;
 use Smile\Map\Model\AddressFormatter;
 use Smile\StoreLocator\Api\Data\RetailerAddressInterface;
 use Smile\StoreLocator\Block\AbstractView;
+use Magento\Framework\UrlInterface;
 
 /**
  * Map rendering block.
@@ -64,6 +65,7 @@ class Map extends AbstractView
         $this->map                = $mapProvider->getMap();
         $this->addressFormatter   = $addressFormatter;
         $this->storeLocatorHelper = $storeLocatorHelper;
+        $this->storeManager       = $context->getStoreManager();
     }
 
     /**
@@ -165,5 +167,19 @@ class Map extends AbstractView
     public function getFacilities()
     {
         return $this->getAddress()->getFacilities();
+    }
+
+    /**
+     * Get media url.
+     *
+     * @return string
+     */
+    public function getMedia()
+    {
+        return $this->storeManager
+            ->getStore()
+            ->getBaseUrl(UrlInterface::URL_TYPE_MEDIA)
+            .'seller/'.
+            $this->getRetailer()->getMediaPath();
     }
 }
