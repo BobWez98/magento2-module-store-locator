@@ -33,7 +33,7 @@ class RetailerEditFormPlugin
     public function afterGetData(DataProvider $subject, $result)
     {
         $retailer = $this->getRetailer($subject);
-
+        $facilities = [];
         if ($retailer !== null && $retailer->getExtensionAttributes()->getAddress()) {
             $address = $retailer->getExtensionAttributes()->getAddress();
             $facilities = json_decode($address->getFacilities(), true);
