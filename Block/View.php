@@ -90,7 +90,7 @@ class View extends AbstractView implements IdentityInterface
         $titleBlock = $this->getLayout()->getBlock('page.main.title');
 
         if ($titleBlock) {
-            $titleBlock->setPageTitle($retailer->getName());
+            $titleBlock->setPageTitle(__('Ranzijn tuin &amp; dier - %1', $retailer->getName()));
         }
 
         $pageTitle = $retailer->getMetaTitle();
@@ -98,7 +98,7 @@ class View extends AbstractView implements IdentityInterface
             $pageTitle = $retailer->getName();
         }
 
-        $this->pageConfig->getTitle()->set(__($pageTitle));
+        $this->pageConfig->getTitle()->set(__('Ranzijn tuin &amp; dier - %1', $pageTitle));
 
         return $this;
     }
