@@ -65,6 +65,10 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->storeLocatorSetup->updateDecimalDegreesColumns($setup);
         }
 
+        if (version_compare($context->getVersion(), '2.0.3', '<')) {
+            $this->storeLocatorSetup->addTimeSlotDescriptionColumns($setup);
+        }
+
         $setup->endSetup();
     }
 }
