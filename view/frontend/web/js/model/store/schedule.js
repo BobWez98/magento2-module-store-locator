@@ -219,7 +219,8 @@ define(['jquery', 'uiClass', 'moment', 'ko', 'mage/translate', 'mage/dropdown'],
                             this.getLocale(),
                             this.dateOptions
                         ),
-                        "hours": this.extractOpeningTimes(this.specialOpeningHours[day])
+                        "hours": this.extractOpeningTimes(this.specialOpeningHours[day]),
+                        "description": this.specialOpeningHours[day].length ? this.specialOpeningHours[day][0].description : ''
                     };
 
                     list.push(object);

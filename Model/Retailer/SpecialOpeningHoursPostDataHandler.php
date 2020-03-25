@@ -95,7 +95,7 @@ class SpecialOpeningHoursPostDataHandler implements \Smile\Retailer\Model\Retail
 
                 foreach ($item['opening_hours'] as $timeSlot) {
                     $timeSlotModel = $this->timeSlotFactory->create(
-                        ['data' => ['start_time' => $timeSlot[0], 'end_time' => $timeSlot[1]]]
+                        ['data' => ['start_time' => $timeSlot[0], 'end_time' => $timeSlot[1], 'description' => $item['description']]]
                     );
                     $specialOpeningHours[$date][] = $timeSlotModel;
                 }

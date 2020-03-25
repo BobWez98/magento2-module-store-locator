@@ -124,6 +124,16 @@ class Renderer extends \Magento\Config\Block\System\Config\Form\Field\FieldArray
             return $this->renderOpeningHoursColumn($columnName);
         }
 
+        if ($columnName == 'description' && isset($this->_columns[$columnName])) {
+            $input = $this->elementFactory->create('text')
+                ->setForm($this->getForm())
+                ->setDisabled(false)
+                ->setValue('<%- ' . $columnName .' %>')
+                ->setName($this->_getCellInputElementName($columnName));
+
+            return $input->toHtml();
+        }
+
         return parent::renderCellTemplate($columnName);
     }
 
@@ -135,6 +145,7 @@ class Renderer extends \Magento\Config\Block\System\Config\Form\Field\FieldArray
     protected function _construct()
     {
         $this->addColumn('date', ['label' => 'Date']);
+        $this->addColumn('description', ['label' => __('Description')]);
         $this->addColumn('opening_hours', ['label' => __('Special Opening Hours')]);
         $this->_addAfter = false;
         $this->_addButtonLabel = __('Add Special Opening Hours');
@@ -262,12 +273,14 @@ JAVASCRIPT;
                     $startTime  = $timeDate->setTime($timeSlot->getStartTime())->toString(DateTime::DATETIME_INTERNAL_FORMAT);
                     $endTime    = $timeDate->setTime($timeSlot->getEndTime())->toString(DateTime::DATETIME_INTERNAL_FORMAT);
                     $timeRanges[] = [$startTime, $endTime];
+                    $description = $timeSlot["description"];
                 }
 
                 $date = new Zend_Date($date, DateTime::DATETIME_INTERNAL_FORMAT);
                 $arrayValues[] = [
                     "date" => $date->toString($this->_localeDate->getDateFormatWithLongYear()),
                     "opening_hours" => $this->jsonHelper->jsonEncode(array_filter($timeRanges)),
+                    "description" => $description,
                 ];
             }
         }

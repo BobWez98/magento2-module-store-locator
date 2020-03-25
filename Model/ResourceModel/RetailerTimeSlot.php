@@ -90,6 +90,7 @@ class RetailerTimeSlot extends AbstractDb
                     [
                         'start_time' => $this->dateFromHour($timeSlot->getStartTime()),
                         'end_time'   => $this->dateFromHour($timeSlot->getEndTime()),
+                        'description'=> $timeSlot->getDescription(),
                     ]
                 );
             }

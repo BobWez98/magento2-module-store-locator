@@ -488,4 +488,23 @@ class StoreLocatorSetup
             ]
         );
     }
+
+    /**
+     * Add description field.
+     *
+     * @param SchemaSetupInterface $setup
+     */
+    public function addTimeSlotDescriptionColumns(SchemaSetupInterface $setup)
+    {
+        $setup->getConnection()->addColumn(
+            $setup->getTable('smile_retailer_time_slots'),
+            'description',
+            [
+                'type' => Table::TYPE_TEXT,
+                'length' => 255,
+                'nullable' => true,
+                'comment'  => 'Description'
+            ]
+        );
+    }
 }
