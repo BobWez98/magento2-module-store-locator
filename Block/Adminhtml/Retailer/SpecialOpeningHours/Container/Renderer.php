@@ -120,6 +120,14 @@ class Renderer extends \Magento\Config\Block\System\Config\Form\Field\FieldArray
             return $this->renderDateColumn($columnName);
         }
 
+        if ($columnName == 'display_from_date' && isset($this->_columns[$columnName])) {
+            return $this->renderDateColumn($columnName);
+        }
+
+        if ($columnName == 'display_to_date' && isset($this->_columns[$columnName])) {
+            return $this->renderDateColumn($columnName);
+        }
+
         if ($columnName == 'opening_hours' && isset($this->_columns[$columnName])) {
             return $this->renderOpeningHoursColumn($columnName);
         }
@@ -144,6 +152,8 @@ class Renderer extends \Magento\Config\Block\System\Config\Form\Field\FieldArray
      */
     protected function _construct()
     {
+        $this->addColumn('display_from_date', ['label' => 'Display From']);
+        $this->addColumn('display_to_date', ['label' => 'Display To']);
         $this->addColumn('date', ['label' => 'Date']);
         $this->addColumn('description', ['label' => __('Description')]);
         $this->addColumn('opening_hours', ['label' => __('Special Opening Hours')]);
@@ -273,14 +283,20 @@ JAVASCRIPT;
                     $startTime  = $timeDate->setTime($timeSlot->getStartTime())->toString(DateTime::DATETIME_INTERNAL_FORMAT);
                     $endTime    = $timeDate->setTime($timeSlot->getEndTime())->toString(DateTime::DATETIME_INTERNAL_FORMAT);
                     $timeRanges[] = [$startTime, $endTime];
+                    $displayFromDate = $timeSlot["display_from_date"];
+                    $displayToDate = $timeSlot["display_to_date"];
                     $description = $timeSlot["description"];
                 }
 
                 $date = new Zend_Date($date, DateTime::DATETIME_INTERNAL_FORMAT);
+                $displayFromDate = new Zend_Date($displayFromDate, DateTime::DATETIME_INTERNAL_FORMAT);
+                $displayToDate = new Zend_Date($displayToDate, DateTime::DATETIME_INTERNAL_FORMAT);
                 $arrayValues[] = [
                     "date" => $date->toString($this->_localeDate->getDateFormatWithLongYear()),
                     "opening_hours" => $this->jsonHelper->jsonEncode(array_filter($timeRanges)),
                     "description" => $description,
+                    "display_from_date" => $displayFromDate->toString($this->_localeDate->getDateFormatWithLongYear()),
+                    "display_to_date" => $displayToDate->toString($this->_localeDate->getDateFormatWithLongYear()),
                 ];
             }
         }

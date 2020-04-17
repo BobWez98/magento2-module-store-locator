@@ -83,14 +83,15 @@ class RetailerTimeSlot extends AbstractDb
                 $data[] = $row;
                 continue;
             }
-
             foreach ($timeSlotList as $timeSlot) {
                 $data[] = array_merge(
                     $row,
                     [
                         'start_time' => $this->dateFromHour($timeSlot->getStartTime()),
                         'end_time'   => $this->dateFromHour($timeSlot->getEndTime()),
-                        'description'=> $timeSlot->getDescription(),
+                        'description' => $timeSlot->getDescription(),
+                        'display_from_date' => $timeSlot->getDisplayFromDate(),
+                        'display_to_date' => $timeSlot->getDisplayToDate()
                     ]
                 );
             }

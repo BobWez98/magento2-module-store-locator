@@ -80,6 +80,42 @@ class RetailerTimeSlot extends DataObject implements RetailerTimeSlotInterface, 
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function getDisplayFromDate()
+    {
+        return $this->getData('display_from_date');
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setDisplayFromDate($displayFromDate)
+    {
+        $this->setData('display_from_date', $displayFromDate);
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getDisplayToDate()
+    {
+        return $this->getData('display_to_date');
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setDisplayToDate($displayToDate)
+    {
+        $this->setData('display_to_date', $displayToDate);
+
+        return $this;
+    }
+
+    /**
      * Specify data which should be serialized to JSON
      *
      * @link  http://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -93,6 +129,8 @@ class RetailerTimeSlot extends DataObject implements RetailerTimeSlotInterface, 
             'start_time' => $this->getStartTime(),
             'end_time'   => $this->getEndTime(),
             'description'=> $this->getDescription(),
+            'display_from_date'=> $this->getDisplayFromDate(),
+            'display_to_date'=> $this->getDisplayToDate()
         ];
     }
 }

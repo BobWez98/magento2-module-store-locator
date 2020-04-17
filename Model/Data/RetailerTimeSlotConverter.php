@@ -54,9 +54,16 @@ class RetailerTimeSlotConverter
                 }
 
                 if (null !== $row['start_time'] && null !== $row['end_time']) {
-                    $timeSlotModel = $this->timeSlotFactory->create(
-                        ['data' => ['start_time' => $row['start_time'], 'end_time' => $row['end_time'], 'description' => $row['description']]]
-                    );
+                    $timeSlotModel = $this->timeSlotFactory->create([
+                            'data' => [
+                                'start_time' => $row['start_time'],
+                                'end_time' => $row['end_time'],
+                                'description' => $row['description'],
+                                'display_from_date' => $row['display_from_date'],
+                                'display_to_date' => $row['display_to_date']
+                            ]
+                        ]);
+
                     $openingHours[$day][] = $timeSlotModel;
                 }
             }
