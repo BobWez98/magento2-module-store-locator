@@ -507,4 +507,40 @@ class StoreLocatorSetup
             ]
         );
     }
+
+    /**
+     * Add 'display from date' field.
+     *
+     * @param SchemaSetupInterface $setup
+     */
+    public function addTimeSlotDisplayFromDateColumns(SchemaSetupInterface $setup)
+    {
+        $setup->getConnection()->addColumn(
+            $setup->getTable('smile_retailer_time_slots'),
+            'display_from_date',
+            [
+                'type' => Table::TYPE_DATE,
+                'nullable' => true,
+                'comment'  => 'Display From Date'
+            ]
+        );
+    }
+
+    /**
+     * Add 'display to date' field.
+     *
+     * @param SchemaSetupInterface $setup
+     */
+    public function addTimeSlotDisplayToDateColumns(SchemaSetupInterface $setup)
+    {
+        $setup->getConnection()->addColumn(
+            $setup->getTable('smile_retailer_time_slots'),
+            'display_to_date',
+            [
+                'type' => Table::TYPE_DATE,
+                'nullable' => true,
+                'comment'  => 'Display To Date'
+            ]
+        );
+    }
 }

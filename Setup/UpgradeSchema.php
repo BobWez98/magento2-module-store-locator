@@ -69,6 +69,11 @@ class UpgradeSchema implements UpgradeSchemaInterface
             $this->storeLocatorSetup->addTimeSlotDescriptionColumns($setup);
         }
 
+        if (version_compare($context->getVersion(), '2.0.4', '<')) {
+            $this->storeLocatorSetup->addTimeSlotDisplayFromDateColumns($setup);
+            $this->storeLocatorSetup->addTimeSlotDisplayToDateColumns($setup);
+        }
+
         $setup->endSetup();
     }
 }
