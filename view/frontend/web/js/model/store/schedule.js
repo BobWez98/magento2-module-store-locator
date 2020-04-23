@@ -241,8 +241,10 @@ define(['jquery', 'uiClass', 'moment', 'ko', 'mage/translate', 'mage/dropdown'],
 
             if (Array.isArray(item)) {
                 item.forEach(function (openingTimes) {
-                    var stringHours = this.openingTimesToString(openingTimes);
-                    hours.push(stringHours);
+                    if (openingTimes['start_time'] !== openingTimes['end_time']) {
+                        var stringHours = this.openingTimesToString(openingTimes);
+                        hours.push(stringHours);
+                    }
                 }, this);
             }
 
