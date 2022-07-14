@@ -291,7 +291,7 @@ JAVASCRIPT;
                 $date = new Zend_Date($date, DateTime::DATETIME_INTERNAL_FORMAT);
                 $displayFromDate = new Zend_Date($displayFromDate, DateTime::DATETIME_INTERNAL_FORMAT);
                 $displayToDate = new Zend_Date($displayToDate, DateTime::DATETIME_INTERNAL_FORMAT);
-                $arrayValues[] = [
+                $arrayValues[uniqid("special_opening_hours_")] = [
                     "date" => $date->toString($this->_localeDate->getDateFormatWithLongYear()),
                     "opening_hours" => $this->jsonHelper->jsonEncode(array_filter($timeRanges)),
                     "description" => $description,
