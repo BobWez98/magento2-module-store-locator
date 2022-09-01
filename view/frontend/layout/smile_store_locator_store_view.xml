@@ -15,14 +15,12 @@
  */
  -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
-
     <update handle="smile_map_styles"/>
-    
+
     <body>
         <attribute name="itemtype" value="http://schema.org/Store" />
         <attribute name="itemscope" value="itemscope"/>
         <referenceBlock name="page.main.title">
-            <block class="Smile\StoreLocator\Block\View\SetStoreLink" name="smile_store_locator_retailer_view.setstorelink" template="view/setStoreLink.phtml"/>
             <arguments>
                 <argument name="add_base_attribute" xsi:type="string">itemprop="name"</argument>
             </arguments>
@@ -33,34 +31,33 @@
             </arguments>
         </referenceBlock>
         <referenceContainer name="content">
-            <block class="Smile\StoreLocator\Block\View" name="smile_store_locator_retailer_view" template="view.phtml">
-                <block class="Smile\StoreLocator\Block\View\Map" name="smile_store_locator_retailer_view.map" template="view/map.phtml">
+            <block class="Smile\StoreLocator\Block\View" name="smile_store_locator_retailer_view" template="Smile_StoreLocator::view.phtml">
+                <block class="Smile\StoreLocator\Block\View\Map" name="smile_store_locator_retailer_view.map" template="Smile_StoreLocator::view/map.phtml">
                     <arguments>
                         <argument name="jsLayout" xsi:type="array">
                             <item name="components" xsi:type="array">
                                 <item name="store-locator-store-view" xsi:type="array">
                                     <item name="component" xsi:type="string">smile-map</item>
-                                </item>
-                            </item>
-                        </argument>
-                    </arguments>
-                </block>
-                <block class="Smile\StoreLocator\Block\View\OpeningHours" name="smile_store_locator_retailer_view.opening_hours" template="view/opening-hours.phtml">
-                    <arguments>
-                        <argument name="jsLayout" xsi:type="array">
-                            <item name="components" xsi:type="array">
-                                <item name="smile-storelocator-store" xsi:type="array">
-                                    <item name="component" xsi:type="string">Smile_StoreLocator/js/model/store</item>
-                                    <item name="schedule" xsi:type="array">
-                                        <item name="openingHoursTemplate" xsi:type="string">Smile_StoreLocator/retailer/opening-hours</item>
-                                        <item name="specialOpeningHoursTemplate" xsi:type="string">Smile_StoreLocator/retailer/special-opening-hours</item>
+                                    <item name="viewBanersWrapper" xsi:type="string">Smile_StoreLocator/retailer/store-view/view-baners-wrap</item>
+                                    <item name="storeDetailsWrap" xsi:type="string">Smile_StoreLocator/retailer/store-view/view-store-details</item>
+                                    <item name="openingHoursTemplate" xsi:type="string">Smile_StoreLocator/retailer/store-view/open-hours-view</item>
+                                    <item name="nearbyStoreTemplate" xsi:type="string">Smile_StoreLocator/retailer/store-view/nearby-store</item>
+                                    <item name="nearbyStoreWrapper" xsi:type="string">Smile_StoreLocator/retailer/store-view/view-closest-store-wrapper</item>
+                                    <item name="children" xsi:type="array">
+                                        <item name="geocoder" xsi:type="array">
+                                            <item name="component" xsi:type="string">smile-geocoder</item>
+                                        </item>
+                                        <item name="baners-container" xsi:type="array">
+                                            <item name="component" xsi:type="string">uiComponent</item>
+                                            <item name="displayArea" xsi:type="string">baners-container</item>
+                                        </item>
                                     </item>
                                 </item>
                             </item>
                         </argument>
                     </arguments>
+                    <block class="Smile\StoreLocator\Block\View\SetStoreLink" name="smile_store_locator_retailer_view.setstorelink" as="setstorelink" template="Smile_StoreLocator::view/setStoreLink.phtml"/>
                 </block>
-                <block class="Smile\StoreLocator\Block\View\ContactInformation" name="smile_store_locator_retailer_view.contact_information" template="view/contact-information.phtml"/>
             </block>
         </referenceContainer>
     </body>

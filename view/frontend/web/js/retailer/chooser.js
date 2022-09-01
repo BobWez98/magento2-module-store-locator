@@ -18,7 +18,7 @@
 define(['jquery', 'uiComponent', 'Magento_Customer/js/customer-data', 'uiRegistry', 'mage/translate'], function ($, Component, storage, registry) {
 
     "use strict";
-     
+
     var retailer = storage.get('current-store');
 
     return Component.extend({
@@ -33,7 +33,7 @@ define(['jquery', 'uiComponent', 'Magento_Customer/js/customer-data', 'uiRegistr
         },
 
         hasStore : function () {
-           return retailer().entity_id != null;
+            return retailer().entity_id != null;
         },
 
         getLinkLabel : function () {
@@ -51,11 +51,11 @@ define(['jquery', 'uiComponent', 'Magento_Customer/js/customer-data', 'uiRegistr
         },
 
         getStoreName : function () {
-           return retailer().name;
+            return retailer().name;
         },
 
         getStoreAddress: function () {
-           return retailer().address;
+            return retailer().address;
         },
 
         geolocalize: function() {

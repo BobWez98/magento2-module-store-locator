@@ -8,7 +8,8 @@
  * @category  Smile
  * @package   Smile\StoreLocator
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
- * @copyright 2017 Smile
+ * @author    Ihor KVASNYTSKYI <ihor.kvasnytskyi@smile-ukraine.com>
+ * @copyright 2019 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -136,6 +137,97 @@ define(['jquery', 'uiClass', 'moment', 'ko', 'mage/translate', 'mage/dropdown'],
             return result;
         },
 
+
+        /**
+         * Get current time store closure.
+         *
+         * @param isOpen
+         * @returns {string}
+         */
+        getTodayCloseTime: function (isOpen) {
+            var now    = new Date();
+            var currentTime = now.getTime();
+            var index  = moment(now).format(this.dateFormat);
+
+            var result = false;
+            if (this.calendar.hasOwnProperty(index)) {
+                var exist = this.calendar[index];
+                if(exist.length == 0){
+                    return result;
+                }
+                if(!exist.length || isOpen === 'closeNow'){
+                    exist = this.getNextDayData();
+                }
+                if(exist) {
+                    if(isOpen === 'Opened') {
+                        var currentStatus = exist[exist.length - 1].end_time;
+                        var currDate = moment(currentStatus, [this.timeFormat]).toDate();
+                        var currDateTime = currDate.getTime();
+
+                        if( currDateTime < currentTime ) {
+                            result = 'closeNow';
+                        } else {
+                            result = exist[exist.length - 1].end_time;
+                        }
+                    } else  {
+                        var openDay  = exist[exist.length - 1];
+                        var openTime = exist[0][0].start_time;
+                        result = openDay + ' ' + openTime;
+                    }
+                }
+            }
+
+            return result;
+        },
+        /**
+         * Get current time and day opening store, if he is closed.
+         *
+         * @param isOpen
+         * @returns []
+         */
+        getNextDayData: function (){
+            var nextDate, day;
+            var indexCurrNexDate;
+            var weekDay = 7;
+            var i = 1;
+            var choiseNextDate = [];
+            while(!choiseNextDate.length && weekDay > i) {
+                if(indexCurrNexDate != null) {
+                    nextDate = new Date(indexCurrNexDate)
+                } else {
+                    nextDate = new Date();
+                }
+                nextDate.setDate(nextDate.getDate() + 1);
+                indexCurrNexDate = moment(nextDate).format(this.dateFormat);
+                choiseNextDate = this.calendar[indexCurrNexDate];
+                i++
+            }
+            if (i == 2) {
+                day = $.mage.__('tomorrow');
+            } else {
+                day = this.getDayWhenStoreOpen(indexCurrNexDate);
+            }
+
+            return [choiseNextDate, day];
+        },
+        /**
+         * Get current day opening store, if he is closed.
+         *
+         * @param indexCurrNexDate
+         * @returns {}
+         */
+        getDayWhenStoreOpen: function (indexCurrNexDate) {
+            if(!indexCurrNexDate) {
+                var day = null;
+                return day;
+            } else {
+                var nextDate = new Date(indexCurrNexDate);
+                var options = {weekday: 'long'};
+                var day = nextDate.toLocaleDateString('en-us', options);
+            }
+            return day;
+        },
+
         /**
          * Check if the store will close soon
          *
@@ -163,7 +255,6 @@ define(['jquery', 'uiClass', 'moment', 'ko', 'mage/translate', 'mage/dropdown'],
         getLinkLabel : function () {
             if (this.isOpenToday()) {
                 var label = $.mage.__('Open Today');
-
                 var closeTime = this.getTodayNextCloseTime();
                 var todayHours = this.getTodayOpeningHours();
 
@@ -193,7 +284,7 @@ define(['jquery', 'uiClass', 'moment', 'ko', 'mage/translate', 'mage/dropdown'],
          */
         initOpeningHoursList : function() {
             var list = [];
-            for (var day in this.openingHours) if (this.openingHours.hasOwnProperty(day)) {
+            for (var day in this.openingHours) if (this.openingHours.hasOwnProperty(day) && day != 0) {
                 if (Array.isArray(this.openingHours[day])) {
                     var object = {
                         "day": this.getDayLabel(day),
@@ -204,6 +295,14 @@ define(['jquery', 'uiClass', 'moment', 'ko', 'mage/translate', 'mage/dropdown'],
                 }
             }
 
+            if (this.openingHours.hasOwnProperty(0) && Array.isArray(this.openingHours[0])) {
+                var sunday = {
+                    "day": this.getDayLabel(0),
+                    "hours": this.extractOpeningTimes(this.openingHours[0])
+                };
+                list.push(sunday);
+            }
+
             this.openingHoursList = ko.observableArray(list);
         },
 
@@ -212,7 +311,7 @@ define(['jquery', 'uiClass', 'moment', 'ko', 'mage/translate', 'mage/dropdown'],
          */
         initSpecialOpeningHoursList : function() {
             var list = [];
-            for (var day in this.specialOpeningHours) if (this.specialOpeningHours.hasOwnProperty(day)) {
+            for (var day in this.specialOpeningHours) if (this.specialOpeningHours.hasOwnProperty(day) && day != 0) {
                 if (Array.isArray(this.specialOpeningHours[day])) {
                     var object = {
                         "day": moment(day, this.dateFormat).toDate().toLocaleString(
@@ -225,6 +324,13 @@ define(['jquery', 'uiClass', 'moment', 'ko', 'mage/translate', 'mage/dropdown'],
 
                     list.push(object);
                 }
+            }
+            if (this.specialOpeningHours.hasOwnProperty(0) && Array.isArray(this.specialOpeningHours[0])) {
+                var sunday = {
+                    "day": this.getDayLabel(0),
+                    "hours": this.extractOpeningTimes(this.specialOpeningHours[0])
+                };
+                list.push(sunday);
             }
 
             this.specialOpeningHoursList = ko.observableArray(list);
@@ -318,7 +424,7 @@ define(['jquery', 'uiClass', 'moment', 'ko', 'mage/translate', 'mage/dropdown'],
 
         initDropdown : function (element, component) {
             $('[data-role=openingHoursDropDown]').dropdownDialog({
-                'appendTo': '[data-block=opening-hours-info]',
+                'appendTo': '[data-block=opening-hours-dropdown]',
                 'triggerTarget': '.showopeninghours',
                 'timeout': '2000',
                 'closeOnMouseLeave': false,

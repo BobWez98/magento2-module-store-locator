@@ -9,7 +9,8 @@
  * @package   Smile\StoreLocator
  * @author    Romain Ruaud <romain.ruaud@smile.fr>
  * @author    Guillaume Vrac <guillaume.vrac@smile.fr>
- * @copyright 2016 Smile
+ * @author    Fanny DECLERCK <fadec@smile.fr>
+ * @copyright 2020 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 
@@ -21,6 +22,13 @@ var config = {
             'smile-storelocator-store': 'Smile_StoreLocator/js/model/store',
             'smile-storelocator-store-collection': 'Smile_StoreLocator/js/model/stores',
             'smile-storelocator-store-schedule': 'Smile_StoreLocator/js/model/store/schedule'
+        }
+    },
+    config: {
+        mixins: {
+            'Smile_Map/js/map': {
+                'Smile_StoreLocator/js/map-mixin': true
+            }
         }
     }
 };

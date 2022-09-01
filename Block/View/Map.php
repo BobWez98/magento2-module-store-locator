@@ -7,13 +7,15 @@
  * @category  Smile
  * @package   Smile\StoreLocator
  * @author    Aurelien FOUCRET <aurelien.foucret@smile.fr>
- * @copyright 2016 Smile
+ * @author    Ihor KVASNYTSKYI <ihor.kvasnytskyi@smile-ukraine.com>
+ * @copyright 2019 Smile
  * @license   Open Software License ("OSL") v. 3.0
  */
 namespace Smile\StoreLocator\Block\View;
 
 use Smile\Map\Api\MapInterface;
 use Smile\Map\Model\AddressFormatter;
+use Smile\Retailer\Api\Data\RetailerInterface;
 use Smile\StoreLocator\Api\Data\RetailerAddressInterface;
 use Smile\StoreLocator\Block\AbstractView;
 use Magento\Framework\UrlInterface;
@@ -43,21 +45,43 @@ class Map extends AbstractView
     private $addressFormatter;
 
     /**
+     * @var \Smile\StoreLocator\Helper\Schedule
+     */
+    private $scheduleHelper;
+
+    /**
+     * @var \Smile\StoreLocator\Model\Retailer\ScheduleManagement
+     */
+    private $scheduleManager;
+
+    /**
+     * @var RetailerCollectionFactory
+     */
+    private $retailerCollectionFactory;
+
+    /**
      * Constructor.
      *
-     * @param \Magento\Framework\View\Element\Template\Context $context            Application context.
-     * @param \Magento\Framework\Registry                      $coreRegistry       Application registry.
-     * @param \Smile\Map\Api\MapProviderInterface              $mapProvider        Map configuration provider.
-     * @param \Smile\StoreLocator\Helper\Data                  $storeLocatorHelper Store locacator helper.
-     * @param \Smile\Map\Model\AddressFormatter                $addressFormatter   Address formatter.
-     * @param array                                            $data               Additional data.
+     * @param \Magento\Framework\View\Element\Template\Context $context Application context.
+     * @param \Magento\Framework\Registry $coreRegistry Application registry.
+     * @param \Smile\Map\Api\MapProviderInterface $mapProvider Map configuration provider.
+     * @param \Smile\StoreLocator\Helper\Data $storeLocatorHelper Store locacator helper.
+     * @param AddressFormatter $addressFormatter Address formatter.
+     * @param \Smile\StoreLocator\Helper\Schedule $scheduleHelper Schedule Helper
+     * @param \Smile\StoreLocator\Model\Retailer\ScheduleManagement $scheduleManagement Schedule Management
+     * @param \Smile\Retailer\Model\ResourceModel\Retailer\CollectionFactory $retailerCollectionFactory The retailer collection factory.
+     * @param array $data Additional data.
      */
+
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Framework\Registry $coreRegistry,
         \Smile\Map\Api\MapProviderInterface $mapProvider,
         \Smile\StoreLocator\Helper\Data $storeLocatorHelper,
         \Smile\Map\Model\AddressFormatter $addressFormatter,
+        \Smile\StoreLocator\Helper\Schedule $scheduleHelper,
+        \Smile\StoreLocator\Model\Retailer\ScheduleManagement $scheduleManagement,
+        \Smile\Retailer\Model\ResourceModel\Retailer\CollectionFactory $retailerCollectionFactory,
         array $data = []
     ) {
         parent::__construct($context, $coreRegistry, $data);
@@ -65,7 +89,9 @@ class Map extends AbstractView
         $this->map                = $mapProvider->getMap();
         $this->addressFormatter   = $addressFormatter;
         $this->storeLocatorHelper = $storeLocatorHelper;
-        $this->storeManager       = $context->getStoreManager();
+        $this->scheduleHelper     = $scheduleHelper;
+        $this->scheduleManager    = $scheduleManagement;
+        $this->retailerCollectionFactory = $retailerCollectionFactory;
     }
 
     /**
@@ -76,6 +102,16 @@ class Map extends AbstractView
     public function getAddress()
     {
         return $this->getRetailer()->getAddress();
+    }
+
+    /**
+     * Return the retailer ID.
+     *
+     * @return int|null
+     */
+    public function getId()
+    {
+        return $this->getRetailer()->getId();
     }
 
     /**
@@ -96,17 +132,64 @@ class Map extends AbstractView
         $jsLayout = $this->jsLayout;
 
         $jsLayout['components']['store-locator-store-view']['provider']  = $this->map->getIdentifier();
-        $jsLayout['components']['store-locator-store-view']['markers'][] = [
-            'latitude'  => $this->getCoordinates()->getLatitude(),
-            'longitude' => $this->getCoordinates()->getLongitude(),
-        ];
-
+        $jsLayout['components']['store-locator-store-view']['markers'] = $this->getMarkerData();
         $jsLayout['components']['store-locator-store-view'] = array_merge(
             $jsLayout['components']['store-locator-store-view'],
             $this->map->getConfig()
         );
+        $jsLayout['components']['store-locator-store-view']['children']['geocoder']['provider'] = $this->map->getIdentifier();
+        $jsLayout['components']['store-locator-store-view']['children']['geocoder'] = array_merge(
+            $jsLayout['components']['store-locator-store-view']['children']['geocoder'],
+            $this->map->getConfig()
+        );
 
         return json_encode($jsLayout);
+    }
+
+    /**
+     * Create full marker data for store view.
+     *
+     * @return array|null
+     */
+    public function getMarkerData()
+    {
+        $result = null;
+        $mediaPath = $this->getMediaPath();
+        $imageUrlRetailer = $this->getImageUrl() . 'seller/';
+        $image = $mediaPath ? $imageUrlRetailer . $mediaPath : false;
+        $retailer = $this->getRetailer();
+
+        $storeMarkerData = [
+            'latitude'  => $this->getCoordinates()->getLatitude(),
+            'longitude' => $this->getCoordinates()->getLongitude(),
+            'image' => $image,
+            'id' => $this->getId(),
+            'phone' => $this->getPhone(),
+            'mail' => $this->getContactMail(),
+            'closestShops' => $this->collectionFull(),
+        ];
+        $storeMarkerData['schedule'] = array_merge(
+            $this->scheduleHelper->getConfig(),
+            [
+                'calendar' => $this->scheduleManager->getCalendar($retailer),
+                'openingHours' => $this->scheduleManager->getWeekOpeningHours($retailer),
+                'specialOpeningHours' => $retailer->getExtensionAttributes()->getSpecialOpeningHours(),
+            ]
+        );
+
+        $result[] = $storeMarkerData;
+
+        return $result;
+    }
+
+    /**
+     * Get current url for button "return to stores list".
+     *
+     * @return string
+     */
+    public function getStoreListUrl()
+    {
+        return $this->storeLocatorHelper->getHomeUrl();
     }
 
     /**
@@ -130,7 +213,7 @@ class Map extends AbstractView
     }
 
     /**
-     * Returns retailer description
+     * Returns retailer description.
      *
      * @return null|string
      */
@@ -138,7 +221,7 @@ class Map extends AbstractView
     {
         return $this->getRetailer()->getDescription();
     }
-
+    
     /**
      * Returns streetview
      *
@@ -170,16 +253,133 @@ class Map extends AbstractView
     }
 
     /**
-     * Get media url.
+     * * Get media part.
+     *
+     * @return mixed
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getImageUrl()
+    {
+        $currentStore = $this->_storeManager->getStore();
+
+        return $currentStore->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA);
+    }
+
+    /**
+     * Get image name.
+     *
+     * @return bool|string
+     */
+    protected function getMediaPath()
+    {
+        return $this->getRetailer()->getMediaPath() ?: false;
+    }
+
+    /**
+     * Get full image url.
+     *
+     * @return bool|string
+     */
+    public function getImage()
+    {
+        $mediaPath = $this->getMediaPath();
+        $imageUrlRetailer = $this->getImageUrl() . 'seller/';
+
+        return $mediaPath ? $imageUrlRetailer . $mediaPath : false;
+    }
+
+    /**
+     * Get store name.
      *
      * @return string
      */
-    public function getMedia()
+    public function getStoreName()
     {
-        return $this->storeManager
-            ->getStore()
-            ->getBaseUrl(UrlInterface::URL_TYPE_MEDIA)
-            .'seller/'.
-            $this->getRetailer()->getMediaPath();
+        return $this->getRetailer()->getName();
+    }
+
+    /**
+     * Get phone number.
+     *
+     * @return bool|string
+     */
+    public function getPhone()
+    {
+        return $this->getRetailer()->getContactPhone() ?: false;
+    }
+
+    /**
+     * Get email address.
+     *
+     * @return bool|string
+     */
+    public function getContactMail()
+    {
+        return $this->getRetailer()->getContactMail() ?: false;
+    }
+
+    /**
+     * Get all exist markers.
+     *
+     * @return mixed
+     */
+    public function getAllMarkers()
+    {
+        $retailerCollection = $this->retailerCollectionFactory->create();
+        $retailerCollection->addAttributeToSelect(['name', 'contact_mail', 'contact_phone', 'contact_mail', 'image']);
+        $retailerCollection->addFieldToFilter('is_active', (int) true);
+        $retailerCollection->addOrder('name', 'asc');
+
+        return $retailerCollection;
+    }
+
+    /**
+     * Create full collection for nearby stores with full data.
+     *
+     * @return array|null
+     */
+    public function collectionFull()
+    {
+        $collection = $this->getAllMarkers();
+
+        $markers  = null;
+
+        if (!$markers) {
+            /** @var RetailerInterface $retailer */
+            $imageUrlRetailer = $this->getImageUrl() . 'seller/';
+            foreach ($collection as $retailer) {
+                $address = $retailer->getExtensionAttributes()->getAddress();
+                $image = $retailer->getMediaPath() ? $imageUrlRetailer . $retailer->getMediaPath() : false;
+                $markerData = [
+                    'id'           => $retailer->getId(),
+                    'latitude'     => $address->getCoordinates()->getLatitude(),
+                    'longitude'    => $address->getCoordinates()->getLongitude(),
+                    'name'         => $retailer->getName(),
+                    'address'      => $this->addressFormatter->formatAddress($address, AddressFormatter::FORMAT_ONELINE),
+                    'url'          => $this->storeLocatorHelper->getRetailerUrl($retailer),
+                    'directionUrl' => $this->map->getDirectionUrl($address->getCoordinates()),
+                    'setStoreData' => $this->getSetStorePostData($retailer),
+                    'image'        => $image,
+                ];
+
+                foreach (['contact_mail', 'contact_phone', 'contact_mail'] as $contactAttribute) {
+                    $markerData[$contactAttribute] = $retailer->getData($contactAttribute) ?: '';
+                }
+
+                $markerData['schedule'] = array_merge(
+                    $this->scheduleHelper->getConfig(),
+                    [
+                        'calendar'            => $this->scheduleManager->getCalendar($retailer),
+                        'openingHours'        => $this->scheduleManager->getWeekOpeningHours($retailer),
+                        'specialOpeningHours' => $retailer->getExtensionAttributes()->getSpecialOpeningHours(),
+                    ]
+                );
+
+
+                $markers[] = $markerData;
+            }
+        }
+
+        return $markers;
     }
 }
