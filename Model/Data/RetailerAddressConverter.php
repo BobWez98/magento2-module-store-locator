@@ -102,7 +102,7 @@ class RetailerAddressConverter
         $target = $factory->create();
         $target = $this->copyFields($source, $target);
         if (! is_array($target->getData('facilities'))) {
-            $target->setData('facilities', json_decode($target->getData('facilities'), true));
+            $target->setData('facilities', json_decode($target->getData('facilities') ?? '', true));
         }
 
         return $target;
