@@ -290,14 +290,14 @@ JAVASCRIPT;
                 }
 
                 $date = new DateTime($date);
-                $displayFromDate = new DateTime($displayFromDate);
-                $displayToDate = new DateTime($displayToDate);
+                $displayFromDate = $displayFromDate ? new DateTime($displayFromDate) : null;
+                $displayToDate = $displayToDate ? new DateTime($displayToDate) : null;
                 $arrayValues[uniqid("special_opening_hours_")] = [
                     "date" => $date->format(MagentoDateTime::DATETIME_PHP_FORMAT),
                     "opening_hours" => $this->jsonHelper->jsonEncode(array_filter($timeRanges)),
                     "description" => $description,
-                    "display_from_date" => $displayFromDate->format(MagentoDateTime::DATETIME_PHP_FORMAT),
-                    "display_to_date" => $displayToDate->format(MagentoDateTime::DATETIME_PHP_FORMAT),
+                    "display_from_date" => $displayFromDate ? $displayFromDate->format(MagentoDateTime::DATETIME_PHP_FORMAT) : null,
+                    "display_to_date" => $displayFromDate ? $displayToDate->format(MagentoDateTime::DATETIME_PHP_FORMAT) : null
                 ];
             }
         }
