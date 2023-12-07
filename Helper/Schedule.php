@@ -16,6 +16,7 @@ use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\Locale\Resolver;
 use Magento\Framework\Stdlib\DateTime;
+use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 
 /**
  * Schedule Helper
@@ -37,7 +38,7 @@ class Schedule extends AbstractHelper
     private $localeResolver;
 
     /**
-     * @var \Zend_Locale_Format
+     * @var TimezoneInterface
      */
     private $localeFormat;
 
@@ -46,12 +47,12 @@ class Schedule extends AbstractHelper
      *
      * @param \Magento\Framework\App\Helper\Context $context        Application Context
      * @param \Magento\Framework\Locale\Resolver    $localeResolver Locale Resolver
-     * @param \Zend_Locale_Format                   $localeFormat   Locale Format
+     * @param TimezoneInterface                     $localeFormat   Locale Format
      */
     public function __construct(
         Context $context,
         Resolver $localeResolver,
-        \Zend_Locale_Format $localeFormat
+        TimezoneInterface $localeFormat
     ) {
         parent::__construct($context);
 
@@ -93,7 +94,7 @@ class Schedule extends AbstractHelper
      */
     private function getTimeFormat()
     {
-        return $this->localeFormat->getTimeFormat($this->localeResolver->getLocale());
+        return $this->localeDate->getTimeFormat($this->getLocale());
     }
 
     /**
