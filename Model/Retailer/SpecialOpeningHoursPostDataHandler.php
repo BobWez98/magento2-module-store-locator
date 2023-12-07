@@ -13,6 +13,8 @@
  */
 namespace Smile\StoreLocator\Model\Retailer;
 
+use DateTime;
+use DateTimeZone;
 use Magento\Framework\Stdlib\DateTime as MagentoDateTime;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Smile\StoreLocator\Api\Data\RetailerTimeSlotInterface;
