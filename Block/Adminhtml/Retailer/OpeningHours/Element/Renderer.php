@@ -12,13 +12,13 @@
  */
 namespace Smile\StoreLocator\Block\Adminhtml\Retailer\OpeningHours\Element;
 
+use DateTime;
 use Magento\Backend\Block\Template;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Data\Form\Element\Renderer\RendererInterface;
-use Magento\Framework\Stdlib\DateTime;
+use Magento\Framework\Stdlib\DateTime as MagentoDateTime;
 use Smile\StoreLocator\Api\Data\RetailerTimeSlotInterface;
 use Smile\StoreLocator\Api\Data\TimeSlotsInterface;
-use Zend_Date;
 
 /**
  * Opening Hours field renderer
@@ -160,9 +160,11 @@ class Renderer extends Template implements RendererInterface
         $values = [];
         if ($this->element->getValue()) {
             foreach ($this->element->getValue() as $timeSlot) {
-                $date   = new Zend_Date($this->date->date()->format('Y-m-d'));
-                $startTime = $date->setTime($timeSlot->getStartTime(), 'h:mm a')->toString(DateTime::DATETIME_INTERNAL_FORMAT);
-                $endTime   = $date->setTime($timeSlot->getEndTime(), 'h:mm a')->toString(DateTime::DATETIME_INTERNAL_FORMAT);
+                $date = new DateTime($this->date->date()->format(MagentoDateTime::DATE_PHP_FORMAT));
+                $startTime = $date->setTimestamp(strtotime($timeSlot->getStartTime()))
+                    ->format(MagentoDateTime::DATETIME_PHP_FORMAT);
+                $endTime = $date->setTimestamp(strtotime($timeSlot->getEndTime()))
+                    ->format(MagentoDateTime::DATETIME_PHP_FORMAT);
                 $values[]  = [$startTime, $endTime];
             }
         }

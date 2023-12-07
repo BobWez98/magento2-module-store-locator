@@ -12,12 +12,12 @@
  */
 namespace Smile\StoreLocator\Block\Adminhtml\Retailer\SpecialOpeningHours\Container;
 
+use DateTime;
 use Magento\Backend\Block\Template;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Json\Helper\Data as JsonHelper;
-use Magento\Framework\Stdlib\DateTime;
+use Magento\Framework\Stdlib\DateTime as MagentoDateTime;
 use Smile\StoreLocator\Api\Data\RetailerTimeSlotInterface;
-use Zend_Date;
 
 /**
  * Special Opening Hours fieldset renderer
@@ -278,25 +278,26 @@ JAVASCRIPT;
                 $timeRanges = [];
 
                 foreach ($timeSlots as $timeSlot) {
-                    $timeDate   = new Zend_Date();
-                    $timeDate->setLocale($this->localeResolver->getLocale());
-                    $startTime  = $timeDate->setTime($timeSlot->getStartTime())->toString(DateTime::DATETIME_INTERNAL_FORMAT);
-                    $endTime    = $timeDate->setTime($timeSlot->getEndTime())->toString(DateTime::DATETIME_INTERNAL_FORMAT);
+                    $timeDate   = new DateTime();
+                    $startTime = $timeDate->setTimestamp(strtotime($timeSlot->getStartTime()))
+                        ->format(MagentoDateTime::DATETIME_PHP_FORMAT);
+                    $endTime   = $timeDate->setTimestamp(strtotime($timeSlot->getEndTime()))
+                        ->format(MagentoDateTime::DATETIME_PHP_FORMAT);
                     $timeRanges[] = [$startTime, $endTime];
                     $displayFromDate = $timeSlot["display_from_date"];
                     $displayToDate = $timeSlot["display_to_date"];
                     $description = $timeSlot["description"];
                 }
 
-                $date = new Zend_Date($date, DateTime::DATETIME_INTERNAL_FORMAT);
-                $displayFromDate = new Zend_Date($displayFromDate, DateTime::DATETIME_INTERNAL_FORMAT);
-                $displayToDate = new Zend_Date($displayToDate, DateTime::DATETIME_INTERNAL_FORMAT);
+                $date = new DateTime($date);
+                $displayFromDate = new DateTime($displayFromDate);
+                $displayToDate = new DateTime($displayToDate);
                 $arrayValues[uniqid("special_opening_hours_")] = [
-                    "date" => $date->toString($this->_localeDate->getDateFormatWithLongYear()),
+                    "date" => $date->format(MagentoDateTime::DATETIME_PHP_FORMAT),
                     "opening_hours" => $this->jsonHelper->jsonEncode(array_filter($timeRanges)),
                     "description" => $description,
-                    "display_from_date" => $displayFromDate->toString($this->_localeDate->getDateFormatWithLongYear()),
-                    "display_to_date" => $displayToDate->toString($this->_localeDate->getDateFormatWithLongYear()),
+                    "display_from_date" => $displayFromDate->format(MagentoDateTime::DATETIME_PHP_FORMAT),
+                    "display_to_date" => $displayToDate->format(MagentoDateTime::DATETIME_PHP_FORMAT),
                 ];
             }
         }

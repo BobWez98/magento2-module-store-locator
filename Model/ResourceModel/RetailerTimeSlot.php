@@ -12,12 +12,12 @@
  */
 namespace Smile\StoreLocator\Model\ResourceModel;
 
+use DateTime;
 use Magento\Framework\Locale\Resolver;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 use Magento\Framework\Model\ResourceModel\Db\Context;
-use Magento\Framework\Stdlib\DateTime;
+use Magento\Framework\Stdlib\DateTime as MagentoDateTime;
 use Smile\StoreLocator\Api\Data\RetailerTimeSlotInterface;
-use Zend_Date;
 
 /**
  * Resource Model for Time Slots items (Eg. : Opening Hours)
@@ -210,10 +210,10 @@ class RetailerTimeSlot extends AbstractDb
      */
     private function dateFromHour($hour)
     {
-        $date = new Zend_Date(0, Zend_Date::TIMESTAMP); // Init as 1970-01-01 since field is store on a DATETIME column.
-        $date->setTime($hour);
+        $date = new DateTime('1970-01-01 00:00:00'); // Init as 1970-01-01 since field is store on a DATETIME column.
+        [$hour, $min] = explode(':', $hour);
 
-        return $date->toString(DateTime::DATETIME_INTERNAL_FORMAT);
+        return $date->setTime((int) $hour, (int) $min)->format(MagentoDateTime::DATETIME_PHP_FORMAT);
     }
 
     /**
@@ -231,6 +231,6 @@ class RetailerTimeSlot extends AbstractDb
             \IntlDateFormatter::SHORT
         );
 
-        return $formatter->format(\DateTime::createFromFormat('Y-m-d H:i:s', $date));
+        return $formatter->format(DateTime::createFromFormat(MagentoDateTime::DATETIME_PHP_FORMAT, $date));
     }
 }

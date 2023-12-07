@@ -13,7 +13,7 @@
  */
 namespace Smile\StoreLocator\Model\Retailer;
 
-use Magento\Framework\Stdlib\DateTime;
+use Magento\Framework\Stdlib\DateTime as MagentoDateTime;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Smile\StoreLocator\Api\Data\RetailerTimeSlotInterface;
 use Smile\StoreLocator\Api\Data\RetailerTimeSlotInterfaceFactory;
@@ -128,9 +128,9 @@ class SpecialOpeningHoursPostDataHandler implements \Smile\Retailer\Model\Retail
         if (null === $format) {
             $format = $this->localeDate->getDateFormatWithLongYear();
         }
-        $date = new \Zend_Date($date, $format);
+        $date = new DateTime($date, new DateTimeZone($this->localeDate->getConfigTimezone()));
 
-        return $date->toString(DateTime::DATE_INTERNAL_FORMAT);
+        return $date->format(MagentoDateTime::DATE_PHP_FORMAT);
     }
 
     /**
