@@ -80,7 +80,7 @@ class OpeningHoursPostDataHandler implements \Smile\Retailer\Model\Retailer\Post
                 if (is_string($timeSlotList)) {
                     try {
                         $timeSlotList = $this->jsonHelper->jsonDecode($timeSlotList);
-                    } catch (\Zend_Json_Exception $exception) {
+                    } catch (\InvalidArgumentException $exception) {
                         $timeSlotList = [];
                     }
                 }
