@@ -24,6 +24,8 @@ use Smile\StoreLocator\Api\Data\RetailerTimeSlotInterfaceFactory;
  */
 class RetailerTimeSlotConverter
 {
+    private RetailerTimeSlotInterfaceFactory $timeSlotFactory;
+
     /**
      * RetailerTimeSlotConverter constructor.
      *
