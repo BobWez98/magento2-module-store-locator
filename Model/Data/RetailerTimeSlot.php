@@ -12,9 +12,9 @@
  */
 namespace Smile\StoreLocator\Model\Data;
 
+use Laminas\Stdlib\JsonSerializable;
 use Magento\Framework\DataObject;
 use Smile\StoreLocator\Api\Data\RetailerTimeSlotInterface;
-use Zend\Stdlib\JsonSerializable;
 
 /**
  * Data Object for Time Slot entries.
